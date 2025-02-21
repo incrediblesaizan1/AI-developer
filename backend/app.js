@@ -1,14 +1,16 @@
-import express from "express";
-const app = express();
+import express from 'express';
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors"
+const app = express();
+
 
 const allowedOrigins =  [
     "http://localhost:5173",
     "https://incrediblesaizan1-ai-developer.vercel.app", 
     ];
   
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(
@@ -35,4 +37,9 @@ app.get("/", (req, res)=>{
     res.send("hello")
 })
 
-app.listen( process.env.PORT  || 2000)
+app.get("/get", (req, res)=>{
+    res.send("get")
+})
+
+
+export default app
