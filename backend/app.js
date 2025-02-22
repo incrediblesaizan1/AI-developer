@@ -65,12 +65,12 @@ app.post("/register", async(req,res)=>{
           .json({ Error: true, message: "All fields are required" });
       }
 
-    const isUser = await userModel.findOne({email});
-    if (isUser) {
-        return res
-          .status(400)
-          .json({ Error: true, message: "User already registered" });
-      }
+    // const isUser = await userModel.findOne({email});
+    // if (isUser) {
+    //     return res
+    //       .status(400)
+    //       .json({ Error: true, message: "User already registered" });
+    //   }
 
 
 //     const hashedPassword = await bcrypt.hash(password, 10);
