@@ -174,7 +174,7 @@ app.get("/profile", isLoggedIn,async(req,res)=>{
       }
 
     res.json({
-        user
+        email: user.email
     })
 
 })
