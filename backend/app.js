@@ -10,7 +10,7 @@ import isLoggedIn from "./middlewares/isLoggedIn.middleware.js";
 
 mongoose
   .connect(
-    `mongodb+srv://incrediblesaizan22:9Ou5yvpxbfcDk2vy@ai-developer.gxqxj.mongodb.net/?retryWrites=true&w=majority&appName=AI-developer`
+    `mongodb+srv://incrediblesaizan22:7rbKPLkylIe8WAVb@ai-developer.c491o.mongodb.net/?retryWrites=true&w=majority&appName=AI-developer`
   )
   .then(() => {
     console.log("MongoDB connected successfully"); 
