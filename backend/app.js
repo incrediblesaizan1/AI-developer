@@ -117,32 +117,33 @@ app.post("/login", async (req, res) => {
           .status(400)
           .json({ Error: true, message: "All fields are required " });
   
-      let user = await userModel.findOne({email});
-      if (!user)
-        return res.status(400).json({ Error: true, message: "User not found" });
+    //   let user = await userModel.findOne({email});
+    //   if (!user)
+    //     return res.status(400).json({ Error: true, message: "User not found" });
   
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).json({ message: "Invalid Credentials" });
-      }
+    //   const isPasswordValid = await bcrypt.compare(password, user.password);
+    //   if (!isPasswordValid) {
+    //     return res.status(400).json({ message: "Invalid Credentials" });
+    //   }
   
-      const accessToken = jwt.sign(
-        { userId: user._id },
-        "lslsdlsdlsfndnvlsklskdssldsldsl"
-      );
+    //   const accessToken = jwt.sign(
+    //     { userId: user._id },
+    //     "lslsdlsdlsfndnvlsklskdssldsldsl"
+    //   );
   
-      return res
-        .cookie("accessToken", accessToken, {
-          httpOnly: true,
-          secure: true, // Use `false` for localhost, `true` for production
-          sameSite: "none",
-        })
-        .status(200)
-        .json({
-          Error: false,
-          message: "You Logged In Successfully",
-          user: { email: user.email },
-        });
+    //   return res
+    //     .cookie("accessToken", accessToken, {
+    //       httpOnly: true,
+    //       secure: true, // Use `false` for localhost, `true` for production
+    //       sameSite: "none",
+    //     })
+    //     .status(200)
+    //     .json({
+    //       Error: false,
+    //       message: "You Logged In Successfully",
+    //       user: { email: user.email },
+    //     });
+    res.send("hello you are logged in")
     } catch (error) {
       console.log("Something went wrong while login user", error);
       res.status(500).end("Something went wrong while login user");
