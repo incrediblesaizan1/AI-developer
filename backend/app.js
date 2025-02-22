@@ -65,43 +65,42 @@ app.post("/register", async(req,res)=>{
           .json({ Error: true, message: "All fields are required" });
       }
 
-    // const isUser = await userModel.findOne({email});
-    // if (isUser) {
-    //     return res
-    //       .status(400)
-    //       .json({ Error: true, message: "User already registered" });
-    //   }
+    const isUser = await userModel.findOne({email});
+    if (isUser) {
+        return res
+          .status(400)
+          .json({ Error: true, message: "User already registered" });
+      }
 
 
-//     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
 
-// const newUser = await userModel.create({
-//       email,
-//       password: hashedPassword,
-//     });
-//     await newUser.save();
+const newUser = await userModel.create({
+      email,
+      password: hashedPassword,
+    });
+    await newUser.save();
 
 
-//     const accessToken = jwt.sign(
-//         { userId: newUser._id },
-//         "lslsdlsdlsfndnvlsklskdssldsldsl"
-//       );
+    const accessToken = jwt.sign(
+        { userId: newUser._id },
+        "lslsdlsdlsfndnvlsklskdssldsldsl"
+      );
 
 
-//       return res
-//       .cookie("accessToken", accessToken, {
-//         httpOnly: true,
-//         secure: true, // Use `false` for localhost, `true` for production
-//         sameSite: "none",
-//       })
-//       .status(200)
-//       .json({
-//         user: { email: newUser.email },
-//         message: "User Registered successfully",
-//       });
+      return res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true, // Use `false` for localhost, `true` for production
+        sameSite: "none",
+      })
+      .status(200)
+      .json({
+        user: { email: newUser.email },
+        message: "User Registered successfully",
+      });
     
-res.send("hello sk")
 
     } catch (error) {
         console.log("Something went wrong while registering user", error);
