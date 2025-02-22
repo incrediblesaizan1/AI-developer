@@ -1,7 +1,6 @@
-import express from 'express';
-const app = express();
+import express from "express"
+const app = express()
 import cors from "cors"
-
 
 const allowedOrigins =  [
     "http://localhost:5173",
@@ -29,15 +28,10 @@ const allowedOrigins =  [
     })
     );  
 app.options("*", cors());
- 
+
 
 app.get("/", (req, res)=>{
     res.send("hello")
 })
 
-app.get("/get", (req, res)=>{
-    res.send("get")
-})
-
-
-export default app
+app.listen(process.env.PORT || 3000)
