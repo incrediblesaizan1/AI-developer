@@ -12,6 +12,6 @@ function isLoggedIn(req, res, next){
     console.error("Error verifying token:", error);
     res.status(403).json({ message: "Invalid or expired token" });
    }
-}
+}   
 
 export default isLoggedIn

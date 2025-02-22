@@ -20,33 +20,32 @@ mongoose
   });
 
 
-const allowedOrigins =  [
-    "http://localhost:5173",
-    "https://incrediblesaizan1-ai-developer.vercel.app", 
-    ];
   
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(
-    cors({
-      origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          console.log("Blocked origin:", origin);
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    })
-    );  
-app.options("*", cors());
-app.use(cookieParser());
+    const allowedOrigins = [
+        "http://localhost:5173",
+    "https://incrediblesaizan1-ai-developer.vercel.app", 
+      ];
+      
+      app.use(express.json());
+      app.use(fileUpload());
+      app.use(express.urlencoded({ extended: true }));
+      app.use(
+        cors({
+          origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+              callback(null, true);
+            } else {
+              callback(new Error("Not allowed by CORS"));
+            }
+          },
+          credentials: true,
+          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+          allowedHeaders: ["Content-Type", "Authorization"],
+        })
+      );
+      app.use(cookieParser());
+      app.options("*", cors());
 
 
 
