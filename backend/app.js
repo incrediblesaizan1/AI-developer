@@ -117,7 +117,7 @@ app.post("/login", async (req, res) => {
           .status(400)
           .json({ Error: true, message: "All fields are required " });
   
-      let user = await UserModel.findOne({email});
+      let user = await userModel.findOne({email});
       if (!user)
         return res.status(400).json({ Error: true, message: "User not found" });
   
