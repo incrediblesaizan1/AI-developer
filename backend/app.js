@@ -108,46 +108,46 @@ const newUser = await userModel.create({
 })
 
 
-app.post("/login", async(req,res)=>{
+app.post("/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
-    
-        if (!email || !password)
-          return res
-            .status(400)
-            .json({ Error: true, message: "All fields are required " });
-    
-        let user = await userModel.findOne({email});
-        if (!user)
-          return res.status(400).json({ Error: true, message: "User not found" });
-    
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-          return res.status(400).json({ message: "Invalid Credentials" });
-        }
-    
-        const accessToken = jwt.sign(
-          { userId: user._id },
-          "lslsdlsdlsfndnvlsklskdssldsldsl"
-        );
-    
+      const { email, password } = req.body;
+  
+      if (!email || !password)
         return res
-          .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true, // Use `false` for localhost, `true` for production
-            sameSite: "none",
-          })
-          .status(200)
-          .json({
-            Error: false,
-            message: "You Logged In Successfully",
-            user: { email: user.email },
-          });
-      } catch (error) {
-        console.log("Something went wrong while login user", error);
-        res.status(500).end("Something went wrong while login user");
+          .status(400)
+          .json({ Error: true, message: "All fields are required " });
+  
+      let user = await UserModel.findOne({email});
+      if (!user)
+        return res.status(400).json({ Error: true, message: "User not found" });
+  
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid Credentials" });
       }
-})
+  
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        "lslsdlsdlsfndnvlsklskdssldsldsl"
+      );
+  
+      return res
+        .cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: true, // Use `false` for localhost, `true` for production
+          sameSite: "none",
+        })
+        .status(200)
+        .json({
+          Error: false,
+          message: "You Logged In Successfully",
+          user: { email: user.email },
+        });
+    } catch (error) {
+      console.log("Something went wrong while login user", error);
+      res.status(500).end("Something went wrong while login user");
+    }
+  });
 
 
 app.get("/logout", isLoggedIn, async (req, res) => {
