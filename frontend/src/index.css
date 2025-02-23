@@ -1,68 +1,90 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+    body {
+      background-color: #fdfeff;
+      overflow-x: hidden;
+      font-family: "Poppins", serif;
+      font-weight: 500;
+    }
   }
-  a:hover {
-    color: #747bff;
+
+@layer components {
+    .input-box {
+      @apply w-full text-sm bg-cyan-600/5 rounded px-5 py-5 mb-4 outline-none;
+    }
+    .btn-primary {
+      @apply w-full text-sm font-medium text-white bg-cyan-500 shadow-lg mt-2 border p-[10px] rounded-full my-1 hover:bg-cyan-100 hover:text-[#05B6D3] cursor-pointer;
+    }
+  
+    .btn-light {
+      @apply bg-slate-950 text-[#05B6D3] shadow-cyan-900 border-cyan-100 border-2 hover:bg-[#263f43] hover:text-white;
+    }
+  
+    .login-ui-box {
+      @apply w-80 h-[450px] rounded-full bg-[#05B6D3] absolute rotate-45;
+    }
+    .icon-btn {
+      @apply text-[22px] text-slate-300 cursor-pointer hover:text-red-500;
+    }
+  
+    .modal-box {
+      @apply w-[80vw] md:w-[40%] h-[80vh] bg-white rounded-lg mx-auto mt-14 p-5 overflow-y-scroll  z-50;
+    }
+  
+    .btn-small {
+      @apply flex items-center gap-1 text-xs font-medium bg-cyan-50 text-[#05B6D3] shadow-cyan-100/0 border border-cyan-100 hover:bg-[#05B6D3] hover:text-white rounded px-3 py-[3px] cursor-pointer;
+    }
+  
+    .btn-delete {
+      @apply bg-rose-50 text-rose-500 shadow-rose-100/0 border border-rose-100 hover:bg-rose-500 hover:text-white;
+    }
+  
+    .input-label {
+      @apply text-xs text-slate-400;
+    }
   }
-  button {
-    background-color: #f9f9f9;
+
+  
+
+  
+@layer components {
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 0px;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #05b6d3;
+      width: 0px;
+      border-radius: 10px;
+    }
+  
+    .custom-scrollbar-dark::-webkit-scrollbar-thumb {
+      background-color: #131314;
+    }
   }
-}
+  
+  @layer components {
+    .custom-scrollbar2::-webkit-scrollbar {
+      width: 4px;
+    }
+  
+    .custom-scrollbar2::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  
+    .custom-scrollbar2::-webkit-scrollbar-thumb {
+      background-color: #05b6d3;
+      width: 5px;
+      border-radius: 10px;
+    }
+  
+    .custom-scrollbar2-dark::-webkit-scrollbar-thumb {
+      background-color: #131314;
+    }
+  }
+  
