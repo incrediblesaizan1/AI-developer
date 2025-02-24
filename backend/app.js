@@ -166,6 +166,7 @@ app.post("/create", isLoggedIn, async (req, res) => {
     const { name } = req.body;
 
     const isUser = await userModel.findOne({ _id: req.user.userId });
+    const isProject = await projectModel.findOne({name: req.body.name})
 
     if (!name) {
       return res
@@ -181,14 +182,20 @@ app.post("/create", isLoggedIn, async (req, res) => {
         });
     }
 
-    const project = projectModel.create({
+    if(isProject){
+      return res
+      .status(400)
+      .json({ Error: true, message: "Project already Exist" });
+    }
+
+    const project = await projectModel.create({
       name,
       users:req.user.userId
     });
-
     
     return res.status(200).json({
-       project: {name:req.body.name, users: isUser.email},
+       project: {name : project.name, users: isUser.email},
+      // project: {project},
       message: "Project Created Successfully",
     });
   } catch (error) {
