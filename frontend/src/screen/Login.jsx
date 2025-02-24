@@ -39,6 +39,7 @@ const Login = () => {
           email,
           password
         })
+        setUser(user.data.user)
         setIsLoading(false);
         console.log("user logged in successfully", user)
         navigate("/dashboard");
