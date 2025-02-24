@@ -12,7 +12,7 @@ const Login = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
-    // const {setUser} = useContext(useUser)
+    const {setUser} = useUser()
 
     const toggleShowPassword = () =>{
         if(isShowPassword === "password"){
