@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import react from "../src/assets/react.svg"
+import React, { useState, useContext } from 'react'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
 import {axiosInstance} from "../function/axiosInstance"
+import { useUser } from '../context/user.context';
 
 const Login = () => {
 
@@ -12,6 +12,7 @@ const Login = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
+    const {setUser} = useContext(useUser)
 
     const toggleShowPassword = () =>{
         if(isShowPassword === "password"){

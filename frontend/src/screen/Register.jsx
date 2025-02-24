@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import react from "../src/assets/react.svg"
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
 import {axiosInstance} from "../function/axiosInstance"

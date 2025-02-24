@@ -1,5 +1,5 @@
-import {UserProvider} from "./context/user.context.jsx"
 import Router from "./function/routes/Router.jsx"
+import {UserProvider} from "./context/user.context.jsx"
 
 function App() {
 
