@@ -66,7 +66,7 @@ const {id} = useParams()
           </div>
           <FaUsers
             onClick={() => setSidePanel(!sidePanel)}
-            className="text-black cursor-pointer text-4xl "
+            className="text-black cursor-pointer hover:text-slate-400 text-4xl "
           />
         </div>
 
@@ -95,7 +95,8 @@ const {id} = useParams()
             sidePanel ? "-translate-x-[100%]" : "-translate-x-0"
           }   w-full h-full bg-[rgb(60,60,60)]`}
         >
-          <div className="h-[8vh] bg-slate-300 w-full">
+          <div className="h-[8vh] bg-slate-300 w-full flex justify-between items-center px-3">
+            <h1 className="text-2xl text-black">Collaborators</h1>
             <RxCross1
               onClick={() => setSidePanel(!sidePanel)}
               className="text-black text-2xl cursor-pointer fixed left-84 top-5 "
