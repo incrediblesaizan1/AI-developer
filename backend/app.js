@@ -48,6 +48,7 @@ app.get("/", (req, res) => {
   res.send("hello saizan khan");
 });
 
+
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -74,7 +75,7 @@ app.post("/register", async (req, res) => {
     await newUser.save();
 
     const accessToken = jwt.sign(
-      { userId: newUser._id },
+      { userId: newUser._id,email: newUser.email },
       "lslsdlsdlsfndnvlsklskdssldsldsl"
     );
 
@@ -95,6 +96,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -114,7 +116,7 @@ app.post("/login", async (req, res) => {
     }
 
     const accessToken = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, email: user.email },
       "lslsdlsdlsfndnvlsklskdssldsldsl"
     );
 
@@ -130,12 +132,12 @@ app.post("/login", async (req, res) => {
         message: "You Logged In Successfully",
         user: { email: user.email },
       });
-    // res.send("hello you are logged in")
   } catch (error) {
     console.log("Something went wrong while login user", error);
     res.status(500).end("Something went wrong while login user");
   }
 });
+
 
 app.get("/logout", isLoggedIn, async (req, res) => {
   res.clearCookie("accessToken");
@@ -147,6 +149,7 @@ app.get("/logout", isLoggedIn, async (req, res) => {
   res.json({ message: "you logged out successfully." });
 });
 
+
 app.get("/profile", isLoggedIn, async (req, res) => {
   const { userId } = req.user;
 
@@ -157,16 +160,17 @@ app.get("/profile", isLoggedIn, async (req, res) => {
   }
 
   res.json({
-    email: user.email,
+  user: req.user
   });
 });
+
 
 app.post("/create", isLoggedIn, async (req, res) => {
   try {
     const { name } = req.body;
 
     const isUser = await userModel.findOne({ _id: req.user.userId });
-    const isProject = await projectModel.findOne({name: req.body.name})
+    const isProject = await projectModel.findOne({ name: req.body.name });
 
     if (!name) {
       return res
@@ -174,28 +178,25 @@ app.post("/create", isLoggedIn, async (req, res) => {
         .json({ Error: true, message: "Please enter the name" });
     }
     if (!req.user.userId) {
-      return res
-        .status(500)
-        .json({
-          Error: true,
-          message: "Something went wrong please try again later",
-        });
+      return res.status(500).json({
+        Error: true,
+        message: "Something went wrong please try again later",
+      });
     }
 
-    if(isProject){
+    if (isProject) {
       return res
-      .status(400)
-      .json({ Error: true, message: "Project already Exist" });
+        .status(400)
+        .json({ Error: true, message: "Project already Exist" });
     }
 
     const project = await projectModel.create({
       name,
-      users:req.user.userId
+      users: req.user.userId,
     });
-    
+
     return res.status(200).json({
-       project: {name : project.name, users: isUser.email},
-      // project: {project},
+      project,
       message: "Project Created Successfully",
     });
   } catch (error) {
@@ -204,9 +205,132 @@ app.post("/create", isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/delete", async(req,res)=>{
- await projectModel.deleteMany()
- res.send("project deleted")
+
+app.get("/delete", async (req, res) => {
+  await projectModel.deleteMany();
+  res.send("project deleted");
+});
+
+
+app.get("/get-user-project", isLoggedIn, async (req, res) => {
+  try {
+    const projects = await projectModel.find({ users: req.user.userId });
+    console.log(req.user)
+    return res.status(200).json({
+      projects: projects,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching projects",
+      error,
+    });
+  }
+});
+
+
+app.get("/project/:id",isLoggedIn,async(req,res)=>{
+
+  try {
+    const {id} = req.params
+
+    if(!id){
+      return res.status(400).json({
+        message: "Something went wrong while fetching projects",
+        error,
+      });
+    }
+
+    const project = await projectModel.findOne({_id: id})
+
+    return res.status(200).json({
+      project
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching project details",
+      error,
+    });
+  }
+
 })
+
+app.get("/get-all-users",isLoggedIn,async(req,res)=>{
+
+    try {
+      const users = await userModel.find()
+      return res.status(200).json({
+        users
+      })
+    } catch (error) {
+      return res.status(500).json({
+        Error: true,
+        message: "Something went wrong while fetching the users."
+      })
+    }
+})
+
+
+app.put("/add-user/:projectId", isLoggedIn, async (req, res) => {
+try {
+  
+    const {collaboratorEmail} = req.body
+  
+  
+    if(!collaboratorEmail){
+      return res.status(400).json({
+        Error: true,
+        message: "Please enter the E-Mail of Collaborator."
+      })
+    }
+  
+    if(!req.params.projectId){
+      return res.status(400).json({
+        Error: true,
+        message: "Please select a Project."
+      })
+    }
+  
+    const findCollaborator = await userModel.findOne({email: collaboratorEmail})
+  
+   if (!findCollaborator){
+      return res.status(400).json({
+        Error: true,
+        message: "User not found."
+      })
+    }
+  
+    const updateProject = await projectModel.findOne({_id: req.params.projectId })
+    
+    if(!updateProject){
+      return res.status(500).json({
+        Error: true,
+        message: "Some error occured while updating the project. Please try again later."
+      })
+    }
+
+   if (updateProject.users.some(e => e.toString() === findCollaborator._id.toString())) {
+  return res.status(400).json({
+    Error: true,
+    message: "User already a collaborator."
+  });
+}
+
+    updateProject.users.push(findCollaborator._id)
+    await updateProject.save()
+  
+    return res.status(200).json({
+      updateProject,
+      message: "Collaborator added successfully."
+    })
+  
+} catch (error) {
+  return res.status(500).json({
+    message: "Something went wrong while adding collaborator projects",
+    error,
+  });
+}
+});
+
 
 app.listen(process.env.PORT || 3000);
