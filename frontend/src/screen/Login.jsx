@@ -3,6 +3,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
 import {axiosInstance} from "../function/axiosInstance"
 import {useUser} from "../context/user.context"
+import Loader from './Loader';
 
 const Login = () => {
 
@@ -101,7 +102,7 @@ const Login = () => {
                 <button type="submit" className="btn-primary bg-slate-700">
                   LOGIN
                 </button>
-                {isLoading && "...loading"}
+                {isLoading && <Loader />}
                 <p className="text-xs text-slate-500 text-center my-4">Or</p>
                 <button
                   type="button"

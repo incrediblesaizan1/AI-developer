@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
 import {axiosInstance} from "../function/axiosInstance"
+import Loader from './Loader';
 
 const Register = () => {
 
@@ -98,7 +99,7 @@ const Register = () => {
                 <button type="submit" className="btn-primary bg-slate-700">
                 Create Account
                 </button>
-                {isLoading && "...loading"}
+                {isLoading && <Loader />}
                 <p className="text-xs text-slate-500 text-center my-4">Or</p>
                 <button
                   type="button"

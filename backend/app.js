@@ -215,7 +215,6 @@ app.get("/delete", async (req, res) => {
 app.get("/get-user-project", isLoggedIn, async (req, res) => {
   try {
     const projects = await projectModel.find({ users: req.user.userId });
-    console.log(req.user)
     return res.status(200).json({
       projects: projects,
     });
@@ -245,6 +244,41 @@ app.get("/project/:id",isLoggedIn,async(req,res)=>{
     return res.status(200).json({
       project
     });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching project details",
+      error,
+    });
+  }
+
+})
+
+
+app.get("/colabUsers/:id",isLoggedIn,async(req,res)=>{
+
+  try {
+    const {id} = req.params
+
+    if(!id){
+      return res.status(400).json({
+        message: "Something went wrong while fetching projects",
+        error,
+      });
+    }
+
+    const project = await projectModel.findOne({_id: id})
+
+    const usersData = await Promise.all(
+      project.users.map(async (e) => {
+        return await userModel.findOne({ _id: e });
+      })
+    );
+
+
+    res.status(200).json({
+      usersData
+    })
 
   } catch (error) {
     return res.status(500).json({
