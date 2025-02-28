@@ -37,7 +37,7 @@ const Home = () => {
     const fetchUser = async () => {
       try {
         const user = await axiosInstance.get("/profile");
-        setUserData(user.data.email);
+        setUserData(user.data.user.data.email);
 
         const project = await axiosInstance.get("/get-user-project");
         setProject(project.data.projects);
@@ -48,7 +48,8 @@ const Home = () => {
 
     fetchUser();
     setLoading(false)
-  }, [project,userData, isModalOpen]);
+  }, [ isModalOpen]);
+
 
 
   return (

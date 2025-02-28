@@ -5,8 +5,10 @@ import { RxCross1 } from "react-icons/rx";
 import { BiSolidUserCircle } from "react-icons/bi";
 import { IoMdAdd } from "react-icons/io";
 import {axiosInstance} from "../function/axiosInstance"
-import {useParams} from "react-router-dom"
+import {data, useParams} from "react-router-dom"
 import Loader from "./Loader";
+import { initializeSocket,receiveMessage, sendMessage } from "../function/socketio";
+import { useRef } from "react";
 
 
 const Project = () => {
@@ -16,11 +18,14 @@ const Project = () => {
   const [error,setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [colabUser, setColabUser] = useState(null)
+  const [message, setMessage] = useState("")
+  const [user, setUser] = useState(null)
+  const messageBox = useRef()
 
 const {id} = useParams()
 
   const addColaborator = async(e) =>{
-    setLoading(true)
+  setLoading(true)
   try {
     const addUser =await axiosInstance.put(`/add-user/${id}`,{
       "collaboratorEmail": e.email
@@ -36,23 +41,131 @@ const {id} = useParams()
   }
   }
 
+  const scrollToBottom = () =>{
+    messageBox.current.scrollTop = messageBox.current.scrollHeight
+  }
+
+  const appendIncomingMessage = async(data) => {
+    const message = messageBox.current;
+
+  const user = await axiosInstance.get(`/user/${data.sender}`)
+
+    const createDiv = document.createElement("div");
+    const emailDiv = document.createElement("div");
+
+   
+    emailDiv.innerText = await user.data.user.email;
+    createDiv.innerText = data.message;
+
+    
+    createDiv.classList.add(
+     "bg-white", "text-md", "mt-2", "rounded","max-h-40", "overflow-auto", "custom-scrollbar2", "text-left", "text-black", "p-2", "w-[60%]"
+    );
+
+   
+    emailDiv.classList.add(
+        "text-xs", 
+        "text-zinc-400", 
+        "mt-1"          
+    );
+
+    createDiv.prepend(emailDiv);  
+    message.appendChild(createDiv);
+    scrollToBottom()
+};
+
+const appendOutgoingMessage = (message, user) => {
+  const messageBox2 = messageBox.current;
+
+  const createDiv = document.createElement("div");
+  const emailDiv = document.createElement("div");
+
+ 
+  createDiv.innerText = message;
+  emailDiv.innerText = user.email;
+
+  
+  createDiv.classList.add(
+    "ml-auto",            
+        "text-md",            
+        "bg-slate-700",       
+        "mt-2",               
+        "rounded",            
+        "max-h-40",           
+        "overflow-auto",      
+        "text-left",          
+        "text-white/70",      
+        "p-2",                
+        "w-[60%]");
+
+ 
+  emailDiv.classList.add(
+      "text-xs", 
+      "text-zinc-500", 
+      "mt-1"          
+  );
+
+  createDiv.prepend(emailDiv);  
+  messageBox2.appendChild(createDiv);
+  scrollToBottom()
+};
+
+  const send = () =>{
+
+    sendMessage("project-message",{
+      message,
+      sender: user.userId
+    })
+    appendOutgoingMessage(message, user)
+    console.log(message)
+    setMessage("")
+  }
+
   useEffect(() => {
     setLoading(true)
+
     const getUsers = async() =>{
       const users = await axiosInstance.get("/get-all-users")
       setUsers(users.data.users)
     }
+
 
     const getPostColab = async () =>{
       const post = await axiosInstance.get(`/colabUsers/${id}`)
       setColabUser(post.data.usersData)
     }
 
-    getPostColab()
-    getUsers()
+    const findingUser = async () =>{
+      const user = await axiosInstance.get("/profile")
+      setUser(user.data.user.data)
+    }
+    
+    
+    const setupSocket = async () => {
+      const socket = await initializeSocket(id);
+      if (socket) {
+        receiveMessage("project-message", (data) => {
+          console.log(data);
+          appendIncomingMessage(data)
+        });
+      } else {
+        console.error("Socket instance is null, cannot receive messages.");
+      }
+    };
+    
+    
+    getPostColab();
+    getUsers();
+    setupSocket();
+    findingUser()
+    
     setLoading(false)
-  }, [id, colabUser])
-  
+  }, [id, colabModal])
+
+
+
+
+
   return (
     <>
     {loading? <Loader /> : (
@@ -70,24 +183,19 @@ const {id} = useParams()
           />
         </div>
 
-        <div className="h-[84vh] overflow-auto p-1 custom-scrollbar2">
-          <div className="bg-white text-md  mt-2 rounded max-h-40 overflow-auto custom-scrollbar2 text-left text-black p-2 w-[60%]">
-            <div className="text-xs text-zinc-500 -mt-1">saini@gmail.com</div>
-            kya kar raha hai
-          </div>
-          <div className=" ml-auto text-md bg-slate-700 mt-2 rounded max-h-40 overflow-auto custom-scrollbar2 text-left text-white/70 p-2 w-[60%]">
-            <div className="text-xs text-zinc-900 -mt-1">sk@gmail.com</div>
-            kuch nahi
-          </div>
+        <div ref={messageBox} className="h-[84vh] overflow-auto p-1 custom-scrollbar2">
+          
         </div>
 
         <div className="h-[8vh] flex bg-slate-900">
           <textarea
+          value={message}
+          onChange={(e)=>setMessage(e.target.value)}
             type="text"
             className="bg-white text-md resize-none border-none outline-none w-[83%] text-black px-3 pt-2 custom-scrollbar2 break-words whitespace-pre-wrap h-full"
             placeholder="Enter message"
           />{" "}
-          <IoIosSend className=" text-4xl mt-3  cursor-pointer ml-3 " />
+          <IoIosSend onClick={send} className=" text-4xl mt-3  cursor-pointer ml-3 " />
         </div>
 
         <div
