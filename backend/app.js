@@ -57,7 +57,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", 
-      "https://ai-developer-frontend-ckhb0odu6-incrediblesaizan1s-projects.vercel.app", 
+      "https://incrediblesaizan1-ai-developer.vercel.app", 
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // 

@@ -16,9 +16,7 @@ export const initializeSocket = async (projectId) => {
     }
 
     // socketInstance = io("http://localhost:3000", {
-    socketInstance = io(
-      "https://incrediblesaizan1-ai-developer-backend.vercel.app",
-      {
+    socketInstance = io("https://incrediblesaizan1-ai-developer-backend.vercel.app", {
         auth: { Authorization: `Bearer ${token}` },
         query: { projectId },
         transports: ["websocket", "polling"],
