@@ -29,18 +29,24 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
+
   if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
   }
-  
-  if (req.method === 'OPTIONS') {
+
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
-  
+
   next();
 });
 
@@ -55,7 +61,7 @@ const io = new Server(server, {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   },
   transports: ["websocket", "polling"],
 });
@@ -283,7 +289,7 @@ app.get("/project/:id", isLoggedIn, async (req, res) => {
     if (!id) {
       return res.status(400).json({
         message: "Something went wrong while fetching projects",
-        error: "Missing project ID"
+        error: "Missing project ID",
       });
     }
 
@@ -307,7 +313,7 @@ app.get("/colabUsers/:id", isLoggedIn, async (req, res) => {
     if (!id) {
       return res.status(400).json({
         message: "Something went wrong while fetching projects",
-        error: "Missing project ID"
+        error: "Missing project ID",
       });
     }
 
