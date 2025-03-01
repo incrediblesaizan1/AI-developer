@@ -31,9 +31,14 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://your-frontend-domain:port",
+    origin: [
+      "http://localhost:5173",
+      "https://incrediblesaizan1-ai-developer.vercel.app",
+    ],
     methods: ["GET", "POST"],
+    credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 io.on("connection", (socket) => {
@@ -422,13 +427,13 @@ app.put("/add-user/:projectId", isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/user/:id", isLoggedIn, async(req,res)=>{
-  const {id} = req.params
-  const user = await userModel.findById(id)
+app.get("/user/:id", isLoggedIn, async (req, res) => {
+  const { id } = req.params;
+  const user = await userModel.findById(id);
 
   res.json({
-    user
-  })
-})
+    user,
+  });
+});
 
 server.listen(process.env.PORT || 3000);
