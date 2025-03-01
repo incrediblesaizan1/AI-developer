@@ -23,13 +23,6 @@ const Login = () => {
         }
     }
 
-    useEffect(() => {
-      if (document.referrer && !sessionStorage.getItem('hasReloaded')) {
-          sessionStorage.setItem('hasReloaded', 'true');
-          window.location.reload();
-      }
-  }, []);
-    
     
 
     const onSubmit = async(e) =>{
