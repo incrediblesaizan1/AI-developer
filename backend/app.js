@@ -27,44 +27,37 @@ const allowedOrigins = [
   "https://incrediblesaizan1-ai-developer.vercel.app",
 ];
 
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://incrediblesaizan1-ai-developer.vercel.app",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   },
   transports: ["websocket", "polling"],
 });
-
-io.on("connection", (socket) => {
-  const projectId = socket.handshake.query.projectId;
-
-  socket.join(projectId);
-
-  socket.on("project-message", (data) => {
-    socket.to(projectId).emit("project-message", data);
-  });
-});
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173", 
-      "https://incrediblesaizan1-ai-developer.vercel.app", 
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // 
-  })
-);
-app.use(cookieParser());
-app.options("*", cors());
 
 io.use(async (socket, next) => {
   try {
@@ -104,7 +97,6 @@ io.on("connection", (socket) => {
 
   socket.on("project-message", (data) => {
     console.log("Received message:", data);
-
     socket.to(projectId).emit("project-message", data);
   });
 
@@ -150,7 +142,7 @@ app.post("/register", async (req, res) => {
     return res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true, // Use false for localhost, true for production
+        secure: true,
         sameSite: "none",
       })
       .status(200)
@@ -190,7 +182,7 @@ app.post("/login", async (req, res) => {
     return res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true, // Use false for localhost, true for production
+        secure: true,
         sameSite: "none",
       })
       .status(200)
@@ -201,17 +193,12 @@ app.post("/login", async (req, res) => {
       });
   } catch (error) {
     console.log("Something went wrong while login user", error);
-    res.status(500).end("Something went wrong while login user");
+    res.status(500).json("Something went wrong while login user");
   }
 });
 
 app.get("/logout", isLoggedIn, async (req, res) => {
   res.clearCookie("accessToken");
-  // , " ", {
-  //   httpOnly: true,
-  //   secure: true, // Use false for localhost, true for production
-  //   sameSite: "none",
-  // });
   res.json({ message: "you logged out successfully." });
 });
 
@@ -295,7 +282,7 @@ app.get("/project/:id", isLoggedIn, async (req, res) => {
     if (!id) {
       return res.status(400).json({
         message: "Something went wrong while fetching projects",
-        error,
+        error: "Missing project ID"
       });
     }
 
@@ -319,7 +306,7 @@ app.get("/colabUsers/:id", isLoggedIn, async (req, res) => {
     if (!id) {
       return res.status(400).json({
         message: "Something went wrong while fetching projects",
-        error,
+        error: "Missing project ID"
       });
     }
 
