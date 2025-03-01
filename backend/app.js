@@ -55,16 +55,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+      "http://localhost:5173", 
+      "https://ai-developer-frontend-ckhb0odu6-incrediblesaizan1s-projects.vercel.app", 
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // 
   })
 );
 app.use(cookieParser());
