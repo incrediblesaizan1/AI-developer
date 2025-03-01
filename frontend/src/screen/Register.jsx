@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
 import {axiosInstance} from "../function/axiosInstance"
@@ -21,6 +21,12 @@ const Register = () => {
         }
     }
 
+   useEffect(() => {
+      if (document.referrer && !sessionStorage.getItem('hasReloaded')) {
+          sessionStorage.setItem('hasReloaded', 'true');
+          window.location.reload();
+      }
+  }, []);
     const onSubmit = async(e) =>{
       e.preventDefault()
 
