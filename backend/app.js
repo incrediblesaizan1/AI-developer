@@ -283,10 +283,9 @@ app.post("/prompt",async(req,res)=>{
   try {
     const question = req.body.prompt
     const data = await generateResponse(question) 
-    res.status(200).json({data})
+    res.send(data)
   } catch (error) {
     return res.status(500).json({
-      message: "Something went wrong while fetching the data",
       error,
     });
   }

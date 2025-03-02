@@ -8,6 +8,12 @@ import { axiosInstance } from "../function/axiosInstance";
 import { data, useParams } from "react-router-dom";
 import Loader from "./Loader";
 import Loader2 from "./Loader2";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 import {
   initializeSocket,
   receiveMessage,
@@ -25,6 +31,8 @@ const Project = () => {
   const [colabUser, setColabUser] = useState(null);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
+  const [allPromptResults, setAllPromptResults] = useState([])
+  const [promptResponse, setPromptResponse] = useState(null)
   const messageBox = useRef();
 
   const { id } = useParams();
@@ -129,7 +137,8 @@ const Project = () => {
       prompt: message,
     });
     
-    console.log(a);
+    setPromptResponse(a)
+    allPromptResults.push(a)
     setMessageLoading(false);
   };
 
@@ -171,6 +180,7 @@ const Project = () => {
     setLoading(false);
   }, [id, colabModal]);
 
+
   return (
     <>
       {loading ? (
@@ -195,7 +205,14 @@ const Project = () => {
             <div
               ref={messageBox}
               className="messageBox h-[84vh] overflow-auto p-1 custom-scrollbar2"
-            ></div>
+            >
+              {messageLoading && (
+                <div class="bg-white text-md mt-2 rounded max-h-40 overflow-auto custom-scrollbar2 text-left text-black p-2 w-[60%]">
+                   <div class="text-xs text-zinc-400 -mt-1">AI</div>
+                AI GENERATING ...
+             </div>
+              )}
+            </div>
 
             <div className="h-[8vh] flex bg-slate-900">
               <textarea
@@ -268,8 +285,35 @@ const Project = () => {
               )}
             </div>
           )}
-
-          {messageLoading?<Loader2/>:<div></div>}
+          <div className="bg-[#060f20] w-[75vw]">
+          {messageLoading?<Loader2/>:(
+            <div className="prose prose-invert max-w-full h-screen overflow-auto custom-scrollbar2 markdown-body">
+             {/* {promptResponse && <ReactMarkdown remarkPlugins={[remarkGfm]}>{promptResponse}</ReactMarkdown>} */}
+             {promptResponse ? (
+  <ReactMarkdown
+    rehypePlugins={[rehypeRaw]}
+    remarkPlugins={[remarkGfm]}
+    components={{
+      code({ node, inline, className, children, ...props }) {
+        const match = /language-(\w+)/.exec(className || "");
+        return !inline && match ? (
+          <SyntaxHighlighter style={dracula} language={match[1]} PreTag="div">
+            {String(children).replace(/\n$/, "")}
+          </SyntaxHighlighter>
+        ) : (
+          <code className={className} {...props}>
+            {children}
+          </code>
+        );
+      },
+    }}
+  >
+    {allPromptResults.length > 0 ? allPromptResults.at(-1)?.data : ""}
+  </ReactMarkdown>
+) : ""}
+           </div>
+        )}
+        </div>
         </div>
       )}
     </>

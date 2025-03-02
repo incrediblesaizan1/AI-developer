@@ -1,4 +1,24 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+.markdown-body {
+  font-family: monospace;
+  color: #c9d1d9;
+  padding: 20px;
+  line-height: 2;
+  width: 75vw;
+}
+.markdown-body pre {
+  background: #060f20;
+  padding: 10px;
+  border-radius: 5px;
+}
+.markdown-body code {
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #4fb10d;
+  background-color: #343942;
+}
 
 @layer base {
     body {
