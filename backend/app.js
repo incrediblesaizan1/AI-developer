@@ -10,6 +10,7 @@ import isLoggedIn from "./middlewares/isLoggedIn.middleware.js";
 import projectModel from "./models/project.model.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import {generateResponse} from "./ai.service.js"
 
 mongoose
   .connect(
@@ -22,32 +23,33 @@ mongoose
     console.log("MongoDB connection error:", error);
   });
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://incrediblesaizan1-ai-developer.vercel.app",
-];
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://incrediblesaizan1-ai-developer.vercel.app",
+  ];
 
-const server = createServer(app);
+// const server = createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://incrediblesaizan1-ai-developer.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-  },
-});
+// const io = new Server(server, {
+//   cors: {
+//     origin: [
+//       "http://localhost:5173",
+//       "https://incrediblesaizan1-ai-developer.vercel.app",
+//     ],
+//     methods: ["GET", "POST"],
+//   },
+// });
 
-io.on("connection", (socket) => {
-  const projectId = socket.handshake.query.projectId;
+// io.on("connection", (socket) => {
+//   const projectId = socket.handshake.query.projectId;
 
-  socket.join(projectId);
+//   socket.join(projectId);
 
-  socket.on("project-message", (data) => {
-    socket.to(projectId).emit("project-message", data);
-  });
-});
+//   socket.on("project-message", (data) => {
+//     socket.to(projectId).emit("project-message", data);
+//   });
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -68,52 +70,53 @@ app.use(
 app.use(cookieParser());
 app.options("*", cors());
 
-io.use(async (socket, next) => {
-  try {
-    let token = socket.handshake.auth?.Authorization;
 
-    if (!token && socket.handshake.headers.authorization) {
-      const authHeader = socket.handshake.headers.authorization;
-      if (authHeader.startsWith("Bearer ")) {
-        token = authHeader.split(" ")[1];
-      }
-    }
+// io.use(async (socket, next) => {
+//   try {
+//     let token = socket.handshake.auth?.Authorization;
 
-    if (!token) {
-      return next(new Error("Authentication Error: No token provided"));
-    }
+//     if (!token && socket.handshake.headers.authorization) {
+//       const authHeader = socket.handshake.headers.authorization;
+//       if (authHeader.startsWith("Bearer ")) {
+//         token = authHeader.split(" ")[1];
+//       }
+//     }
 
-    const user = jwt.verify(
-      token.replace("Bearer ", ""),
-      "lslsdlsdlsfndnvlsklskdssldsldsl"
-    );
+//     if (!token) {
+//       return next(new Error("Authentication Error: No token provided"));
+//     }
 
-    if (!user) {
-      return next(new Error("Authentication Error: Invalid token"));
-    }
+//     const user = jwt.verify(
+//       token.replace("Bearer ", ""),
+//       "lslsdlsdlsfndnvlsklskdssldsldsl"
+//     );
 
-    socket.user = user;
-    next();
-  } catch (error) {
-    console.error("Socket Authentication Error:", error);
-    next(new Error("Authentication failed"));
-  }
-});
+//     if (!user) {
+//       return next(new Error("Authentication Error: Invalid token"));
+//     }
 
-io.on("connection", (socket) => {
-  const projectId = socket.handshake.query.projectId;
-  socket.join(projectId);
+//     socket.user = user;
+//     next();
+//   } catch (error) {
+//     console.error("Socket Authentication Error:", error);
+//     next(new Error("Authentication failed"));
+//   }
+// });
 
-  socket.on("project-message", (data) => {
-    console.log("Received message:", data);
+// io.on("connection", (socket) => {
+//   const projectId = socket.handshake.query.projectId;
+//   socket.join(projectId);
 
-    socket.to(projectId).emit("project-message", data);
-  });
+//   socket.on("project-message", (data) => {
+//     console.log("Received message:", data);
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
+//     socket.to(projectId).emit("project-message", data);
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected");
+//   });
+// });
 
 app.get("/", (req, res) => {
   res.send("hello saizan khan");
@@ -276,6 +279,20 @@ app.get("/delete", async (req, res) => {
   res.send("project deleted");
 });
 
+app.post("/prompt",async(req,res)=>{
+  try {
+    const question = req.body.prompt
+    const data = await generateResponse(question) 
+    res.status(200).json({data})
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching the data",
+      error,
+    });
+  }
+
+})
+
 app.get("/get-user-project", isLoggedIn, async (req, res) => {
   try {
     const projects = await projectModel.find({ users: req.user.data.userId });
@@ -434,4 +451,5 @@ app.get("/user/:id", isLoggedIn, async(req,res)=>{
   })
 })
 
-server.listen(process.env.PORT || 3000);
+// server.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3000)
