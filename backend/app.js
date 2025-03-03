@@ -304,7 +304,7 @@ app.post("/prompt",isLoggedIn,async(req,res)=>{
 app.get("/user-question", isLoggedIn,async(req,res)=>{
 
   try {
-    const questions = await QuestionsModel.find()
+    const questions = await QuestionsModel.find({userId: req.user.data.userId})
     return res.status(200).json({questions})
   } catch (error) {
     return res.status(500).json({
