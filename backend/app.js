@@ -315,6 +315,22 @@ app.get("/user-question", isLoggedIn,async(req,res)=>{
 
 })
 
+app.post("/find-question", isLoggedIn, async(req,res)=>{
+  try {
+    const quetionId = req.body.question
+
+    const find = await QuestionsModel.findOne({_id: quetionId})
+
+    return res.status(200).json({find})
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching questions",
+      error,
+    }); 
+  }
+})
+
 app.get("/get-user-project", isLoggedIn, async (req, res) => {
   try {
     const projects = await projectModel.find({ users: req.user.data.userId });

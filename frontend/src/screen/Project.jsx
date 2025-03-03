@@ -12,6 +12,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { RiChatSearchFill } from "react-icons/ri";
+import { ImSearch } from "react-icons/im";
 
 import {
   initializeSocket,
@@ -30,9 +31,9 @@ const Project = () => {
   const [colabUser, setColabUser] = useState(null);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
-  const [allPromptResults, setAllPromptResults] = useState([]);
   const [promptResponse, setPromptResponse] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [selectedQue, setSelectedQue] = useState({})
   const messageBox = useRef();
 
   const { id } = useParams();
@@ -128,6 +129,19 @@ const Project = () => {
     scrollToBottom();
   };
 
+  const fetchQuestion = async (e) =>{
+    setMessageLoading(true);
+   const data =  await axiosInstance.post("/find-question",{
+    question: e._id
+    })
+    appendOutgoingMessage(data.data.find.question, user);
+    setMessage("");
+    setSelectedQue(data.data.find)
+    setPromptResponse(data.data.find.response)
+    console.log(promptResponse)
+    setMessageLoading(false);
+  }
+
   const send = async () => {
     appendOutgoingMessage(message, user);
     setMessage("");
@@ -138,10 +152,8 @@ const Project = () => {
     });
 
     questions.push({ question: message, response: a.data });
-    console.log(questions);
 
-    setPromptResponse(a);
-    allPromptResults.push(a);
+    setPromptResponse(a.data);
     setMessageLoading(false);
   };
 
@@ -252,10 +264,11 @@ const Project = () => {
               {questions
                 ? questions.map((e) => (
                     <div
+                    onClick={()=>(fetchQuestion(e), setSidePanel(true))}
                       key={e.response}
-                      className="bg-white hover:bg-slate-400 flex h-[8vh] my-2 rounded-md px-1 mx-2 items-center"
+                      className="bg-white gap-2 hover:bg-slate-400 flex h-[8vh] my-2 rounded-md px-1 mx-2 items-center"
                     >
-                      <BiSolidUserCircle className="text-slate-700 text-4xl " />{" "}
+                      <ImSearch className="text-slate-700 text-2xl " />{" "}
                       <div className="text-black font-bold mx-1">
                         {e.question}
                       </div>
@@ -323,8 +336,8 @@ const Project = () => {
                       },
                     }}
                   >
-                    {allPromptResults.length > 0
-                      ? allPromptResults.at(-1)?.data
+                    {promptResponse
+                      ? promptResponse
                       : ""}
                   </ReactMarkdown>
                 ) : (
