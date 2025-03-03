@@ -11,6 +11,7 @@ import projectModel from "./models/project.model.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import {generateResponse} from "./ai.service.js"
+import QuestionsModel from "./models/questions.model.js";
 
 mongoose
   .connect(
@@ -279,15 +280,37 @@ app.get("/delete", async (req, res) => {
   res.send("project deleted");
 });
 
-app.post("/prompt",async(req,res)=>{
+app.post("/prompt",isLoggedIn,async(req,res)=>{
   try {
     const question = req.body.prompt
+  const { userId } = req.user.data;
+
+    
     const data = await generateResponse(question) 
     res.send(data)
+   await QuestionsModel.create({
+    question: question,
+    response: data,
+     userId
+    })
   } catch (error) {
     return res.status(500).json({
       error,
     });
+  }
+
+})
+
+app.get("/user-question", isLoggedIn,async(req,res)=>{
+
+  try {
+    const questions = await QuestionsModel.find()
+    return res.status(200).json({questions})
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching questions",
+      error,
+    }); 
   }
 
 })

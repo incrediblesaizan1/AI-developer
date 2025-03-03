@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaUsers } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { RxCross1 } from "react-icons/rx";
 import { BiSolidUserCircle } from "react-icons/bi";
-import { IoMdAdd } from "react-icons/io";
 import { axiosInstance } from "../function/axiosInstance";
 import { data, useParams } from "react-router-dom";
 import Loader from "./Loader";
@@ -13,6 +11,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { RiChatSearchFill } from "react-icons/ri";
 
 import {
   initializeSocket,
@@ -31,8 +30,9 @@ const Project = () => {
   const [colabUser, setColabUser] = useState(null);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(null);
-  const [allPromptResults, setAllPromptResults] = useState([])
-  const [promptResponse, setPromptResponse] = useState(null)
+  const [allPromptResults, setAllPromptResults] = useState([]);
+  const [promptResponse, setPromptResponse] = useState(null);
+  const [questions, setQuestions] = useState([]);
   const messageBox = useRef();
 
   const { id } = useParams();
@@ -132,13 +132,16 @@ const Project = () => {
     appendOutgoingMessage(message, user);
     setMessage("");
     setMessageLoading(true);
-    
+
     let a = await axiosInstance.post("/prompt", {
       prompt: message,
     });
-    
-    setPromptResponse(a)
-    allPromptResults.push(a)
+
+    questions.push({ question: message, response: a.data });
+    console.log(questions);
+
+    setPromptResponse(a);
+    allPromptResults.push(a);
     setMessageLoading(false);
   };
 
@@ -160,6 +163,11 @@ const Project = () => {
       setUser(user.data.user.data);
     };
 
+    const userQuestion = async () => {
+      const question = await axiosInstance.get("/user-question");
+      setQuestions(question.data.questions);
+    };
+
     // const setupSocket = async () => {
     //   const socket = await initializeSocket(id);
     //   if (socket) {
@@ -176,10 +184,10 @@ const Project = () => {
     getUsers();
     // setupSocket();
     findingUser();
+    userQuestion();
 
     setLoading(false);
-  }, [id, colabModal]);
-
+  }, [id, promptResponse]);
 
   return (
     <>
@@ -188,15 +196,15 @@ const Project = () => {
       ) : (
         <div className="w-full flex relative h-full bg-[rgb(0,0,0,0.7)]">
           <div className=" relative bg-[rgb(0,0,0)] text-white/60 w-[25vw] h-full">
-            <div className="h-[8vh] bg-slate-300 w-full px-1 flex items-center justify-between">
-              <div className="flex items-center">
+            <div className="h-[8vh] bg-slate-300 w-full px-1 flex items-center justify-end">
+              {/* <div className="flex items-center">
                 <IoMdAdd
                   onClick={() => setColabModal(true)}
                   className="text-black cursor-pointer text-4xl"
                 />
                 <span className="text-black">Add collaborator</span>
-              </div>
-              <FaUsers
+              </div> */}
+              <RiChatSearchFill
                 onClick={() => setSidePanel(!sidePanel)}
                 className="text-black cursor-pointer hover:text-slate-400 text-4xl "
               />
@@ -207,10 +215,10 @@ const Project = () => {
               className="messageBox h-[84vh] overflow-auto p-1 custom-scrollbar2"
             >
               {messageLoading && (
-                <div class="bg-white text-md mt-2 rounded max-h-40 overflow-auto custom-scrollbar2 text-left text-black p-2 w-[60%]">
-                   <div class="text-xs text-zinc-400 -mt-1">AI</div>
-                AI GENERATING ...
-             </div>
+                <div className="bg-white text-md mt-2 rounded max-h-40 overflow-auto custom-scrollbar2 text-left text-black p-2 w-[60%]">
+                  <div className="text-xs text-zinc-400 -mt-1">AI</div>
+                  AI GENERATING ...
+                </div>
               )}
             </div>
 
@@ -234,21 +242,23 @@ const Project = () => {
               }   w-full h-full bg-[rgb(60,60,60)]`}
             >
               <div className="h-[8vh] bg-slate-300 w-full flex justify-between items-center px-3">
-                <h1 className="text-2xl text-black">Collaborators</h1>
+                <h1 className="text-2xl text-black">Questions</h1>
                 <RxCross1
                   onClick={() => setSidePanel(!sidePanel)}
                   className="text-black text-2xl cursor-pointer fixed left-84 top-5 "
                 />
               </div>
 
-              {colabUser
-                ? colabUser.map((e) => (
+              {questions
+                ? questions.map((e) => (
                     <div
-                      key={e.email}
+                      key={e.response}
                       className="bg-white hover:bg-slate-400 flex h-[8vh] my-2 rounded-md px-1 mx-2 items-center"
                     >
                       <BiSolidUserCircle className="text-slate-700 text-4xl " />{" "}
-                      <div className="text-black font-bold mx-1">{e.email}</div>
+                      <div className="text-black font-bold mx-1">
+                        {e.question}
+                      </div>
                     </div>
                   ))
                 : ""}
@@ -286,33 +296,43 @@ const Project = () => {
             </div>
           )}
           <div className="bg-[#060f20] w-[75vw]">
-          {messageLoading?<Loader2/>:(
-            <div className="prose prose-invert max-w-full h-screen overflow-auto custom-scrollbar2 markdown-body">
-             {promptResponse ? (
-  <ReactMarkdown
-    rehypePlugins={[rehypeRaw]}
-    remarkPlugins={[remarkGfm]}
-    components={{
-      code({ node, inline, className, children, ...props }) {
-        const match = /language-(\w+)/.exec(className || "");
-        return !inline && match ? (
-          <SyntaxHighlighter style={dracula} language={match[1]} PreTag="div">
-            {String(children).replace(/\n$/, "")}
-          </SyntaxHighlighter>
-        ) : (
-          <code className={className} {...props}>
-            {children}
-          </code>
-        );
-      },
-    }}
-  >
-    {allPromptResults.length > 0 ? allPromptResults.at(-1)?.data : ""}
-  </ReactMarkdown>
-) : ""}
-           </div>
-        )}
-        </div>
+            {messageLoading ? (
+              <Loader2 />
+            ) : (
+              <div className="prose prose-invert max-w-full h-screen overflow-auto custom-scrollbar2 markdown-body">
+                {promptResponse ? (
+                  <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]}
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || "");
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            style={dracula}
+                            language={match[1]}
+                            PreTag="div"
+                          >
+                            {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code className={className} {...props}>
+                            {children}
+                          </code>
+                        );
+                      },
+                    }}
+                  >
+                    {allPromptResults.length > 0
+                      ? allPromptResults.at(-1)?.data
+                      : ""}
+                  </ReactMarkdown>
+                ) : (
+                  ""
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>
