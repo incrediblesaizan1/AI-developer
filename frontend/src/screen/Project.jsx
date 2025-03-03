@@ -288,7 +288,6 @@ const Project = () => {
           <div className="bg-[#060f20] w-[75vw]">
           {messageLoading?<Loader2/>:(
             <div className="prose prose-invert max-w-full h-screen overflow-auto custom-scrollbar2 markdown-body">
-             {/* {promptResponse && <ReactMarkdown remarkPlugins={[remarkGfm]}>{promptResponse}</ReactMarkdown>} */}
              {promptResponse ? (
   <ReactMarkdown
     rehypePlugins={[rehypeRaw]}
