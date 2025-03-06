@@ -125,15 +125,15 @@ app.get("/", async(req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password,username, name } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !username || !name) {
       return res
         .status(400)
         .json({ Error: true, message: "All fields are required" });
     }
 
-    const isUser = await userModel.findOne({ email });
+    const isUser = await userModel.findOne({ $or: [{ email }, { username }] });
     if (isUser) {
       return res
         .status(400)
@@ -144,6 +144,8 @@ app.post("/register", async (req, res) => {
 
     const newUser = await userModel.create({
       email,
+      username,
+      name,
       password: hashedPassword,
     });
     await newUser.save();
@@ -172,14 +174,14 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    if (!email || !password)
+    if (!identifier || !password)
       return res
         .status(400)
         .json({ Error: true, message: "All fields are required " });
 
-    let user = await userModel.findOne({ email });
+    let user = await userModel.findOne({ $or: [{ email: req.body.identifier }, { username: req.body.identifier }] });
     if (!user)
       return res.status(400).json({ Error: true, message: "User not found" });
 
@@ -231,8 +233,9 @@ app.get("/profile", isLoggedIn, async (req, res) => {
   }
 
   res.json({
-    user: req.user,
+    user
   });
+
 });
 
 app.post("/create", isLoggedIn, async (req, res) => {

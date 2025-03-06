@@ -25,11 +25,29 @@ const Home = () => {
   const [selectedQue, setSelectedQue] = useState({});
   const [inputDown, setInputDown] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [greet, setGreet] = useState("");
   const messageBox = useRef();
   const submitRef = useRef();
 
   const scrollToBottom = () => {
     messageBox.current.scrollTop = messageBox.current.scrollHeight;
+  };
+
+  const greetfunc = () => {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour >= 0 && hour < 5) {
+      setGreet("Good Late Night");
+    } else if (hour >= 5 && hour < 12) {
+      setGreet("Good Morning");
+    } else if (hour >= 12 && hour < 17) {
+      setGreet("Good Afternoon");
+    } else if (hour >= 17 && hour < 20) {
+      setGreet("Good Evening");
+    } else {
+      setGreet("Good Night");
+    }
   };
 
   const appendOutgoingMessage = (message, user) => {
@@ -39,10 +57,8 @@ const Home = () => {
     }
 
     const createDiv = document.createElement("div");
-    // const emailDiv = document.createElement("div");
 
     createDiv.innerText = message || "hello";
-    // emailDiv.innerText = user?.email || "saini@gmail.com";
 
     createDiv.classList.add(
       "bg-[#1c1b1a]",
@@ -53,9 +69,7 @@ const Home = () => {
       "rounded-md"
     );
 
-    // emailDiv.classList.add("text-xs", "text-zinc-500", "mt-1");
-
-    // createDiv.prepend(emailDiv);
+    
     messageBox.current.appendChild(createDiv);
     scrollToBottom();
   };
@@ -123,7 +137,7 @@ const Home = () => {
     const findingUser = async () => {
       try {
         const user = await axiosInstance.get("/profile");
-        setUser(user.data.user.data);
+        setUser(user.data.user);
       } catch (error) {
         navigate("/login");
       }
@@ -136,6 +150,7 @@ const Home = () => {
 
     findingUser();
     userQuestion();
+    greetfunc();
 
     setLoading(false);
   }, [promptResponse]);
@@ -244,8 +259,8 @@ const Home = () => {
             <div className="w-full mx-auto flex flex-col justify-center items-center py-14">
               {!inputDown && (
                 <div className="flex items-center text-6xl">
-                  <IoIosFlower className="text-6xl text-[#52ced6]" /> Good
-                  evening, Saizan
+                  <IoIosFlower className="text-6xl text-[#52ced6]" /> {greet},{" "}
+                  {user && user.name.split(" ")[0]}
                 </div>
               )}
 

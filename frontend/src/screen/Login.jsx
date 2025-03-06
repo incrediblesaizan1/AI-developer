@@ -7,7 +7,7 @@ import Loader from './Loader';
 
 const Login = () => {
 
-    const [email, setEmail] = useState("")
+    const [identifier, setIdentifier] = useState("")
     const [isShowPassword, setIsShowPassword] = useState("password")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
@@ -28,7 +28,7 @@ const Login = () => {
     const onSubmit = async(e) =>{
       e.preventDefault()
 
-      if(!email){
+      if(!identifier){
        return setError("All fields are required")
       }else if(!password){
       return setError("Please enter the password")
@@ -39,7 +39,7 @@ const Login = () => {
 
       try {
       const user = await axiosInstance.post("/login",{
-          email,
+        identifier,
           password
         })
         setUser(user.data.user)
@@ -74,8 +74,8 @@ const Login = () => {
                   type="text"
                   placeholder="Enter your E-Mail or Username"
                   className="input-box bg-black text-white"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                 />
               <div className="flex items-center bg-black text-white px-5 rounded mb-3">
       <input

@@ -7,6 +7,8 @@ import Loader from './Loader';
 const Register = () => {
 
     const [email, setEmail] = useState("")
+    const [name, setName] = useState("")
+    const [username, setUsername] = useState("")
     const [isShowPassword, setIsShowPassword] = useState("password")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
@@ -25,7 +27,7 @@ const Register = () => {
     const onSubmit = async(e) =>{
       e.preventDefault()
 
-      if(!email){
+      if(!email || !name || !username){
        return setError("All fields are required")
       }else if(!password){
       return setError("Please enter the password")
@@ -37,6 +39,8 @@ const Register = () => {
       try {
       const user = await axiosInstance.post("/register",{
           email,
+          name,
+          username,
           password
         })
         setIsLoading(false);
@@ -52,7 +56,7 @@ const Register = () => {
     }
 
     return (
-        <div className="h-screen bg-gray-900 overflow-hidden relative">
+        <div className="h-screen bg-gray-900  overflow-hidden relative">
           <div className="login-ui-box right-10 -top-40 " />
           <div className="login-ui-box bg-cyan-200  -bottom-40 right-2/3" />
     
@@ -62,13 +66,27 @@ const Register = () => {
             >
             </div>
     
-            <div className="w-2/4 h-[75vh] bg-slate-700 rounded-r-lg relative p-16 shadow-lg shadow-cyan-200/20">
+            <div className="w-2/4 h-[85vh] bg-slate-700 rounded-r-lg relative px-16 py-8 shadow-lg shadow-cyan-200/20">
               <form onSubmit={onSubmit}>
                 <h4 className="text-2xl text-zinc-400 font-semibold mb-7">Register</h4>
     
                 <input
                   type="text"
-                  placeholder="Enter your E-Mail or Username"
+                  placeholder="Enter your Name"
+                  className="input-box bg-black text-white"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Enter your Username"
+                  className="input-box bg-black text-white"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Enter your E-Mail"
                   className="input-box bg-black text-white"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

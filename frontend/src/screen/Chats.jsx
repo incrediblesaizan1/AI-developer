@@ -116,21 +116,27 @@ const Chats = () => {
                       className=" text-white cursor-pointer bg-slate-700 my-3 w-2/4 h-16 text-start content-center px-6 rounded-2xl mx-auto"
                     >
                       {e.question.length > 75 ? (
-                        <h1  onClick={() => navigate(`/recents/${e._id}`)} className="capitalize text-lg flex items-center justify-between">
+                        <div className="w-full flex items-center justify-between">
+                        <h1  onClick={() => navigate(`/recents/${e._id}`)} className="capitalize w-full text-lg flex items-center justify-between">
                           {e.question.trim().slice(0, 75)}...{" "}
-                          <MdOutlineDelete
-                            className="text-rose-800 cursor-pointer"
+                          
+                        </h1>
+                        <MdOutlineDelete
+                            className="text-red-500 w-12 h-5 hover:text-blue-300 cursor-pointer"
                             onClick={() => deleteMessage(e._id)}
                           />
-                        </h1>
+                        </div>
                       ) : (
-                        <h1 className="capitalize text-lg flex items-center justify-between">
+                        <div className="w-full flex items-center justify-between">
+                        <h1  onClick={() => navigate(`/recents/${e._id}`)} className="capitalize w-full text-lg flex items-center justify-between">
                           {e.question.trim().slice(0, 72)}{" "}
-                          <MdOutlineDelete
-                            className="text-rose-800 cursor-pointer"
-                            onClick={() => deleteMessage(e._id)}
-                          />
+                         
                         </h1>
+                        <MdOutlineDelete
+                            className="text-red-500 w-12 h-5 hover:text-blue-300 cursor-pointer"
+                            onClick={() => deleteMessage(e._id)}
+                            />
+                            </div>
                       )}
 
                       <h3 className="text-xs text-slate-500">{formatDate(e.date)}</h3>
