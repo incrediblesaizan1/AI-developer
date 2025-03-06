@@ -119,7 +119,7 @@ app.options("*", cors());
 //   });
 // });
 
-app.get("/", (req, res) => {
+app.get("/", async(req, res) => {
   res.send("hello saizan khan");
 });
 
@@ -330,6 +330,20 @@ app.post("/find-question", isLoggedIn, async(req,res)=>{
     }); 
   }
 })
+
+app.delete("/delete-question/:id", isLoggedIn, async(req,res)=>{
+
+  try {
+    const {id} = req.params
+    const deleteque = await QuestionsModel.findOneAndDelete({_id: id})
+  } catch (error) {
+    res.status(500).json({
+      message :"Something went wrong while deleting the message"
+    })
+  }
+
+})
+
 
 app.get("/get-user-project", isLoggedIn, async (req, res) => {
   try {

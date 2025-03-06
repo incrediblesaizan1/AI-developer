@@ -24,6 +24,10 @@
   font-size: 15px; 
 }
 
+*{
+  font-family: cursive;
+}
+
 
 @layer base {
     body {
@@ -96,20 +100,55 @@
   @layer components {
     .custom-scrollbar2::-webkit-scrollbar {
       width: 4px;
+
     }
   
     .custom-scrollbar2::-webkit-scrollbar-track {
       background: transparent;
+
     }
   
     .custom-scrollbar2::-webkit-scrollbar-thumb {
       background-color: #05b6d3;
       width: 5px;
       border-radius: 10px;
+      cursor:grab;
+
     }
   
     .custom-scrollbar2-dark::-webkit-scrollbar-thumb {
       background-color: #131314;
+      cursor: pointer;
+
+
+
     }
   }
   
+  @layer components {
+    .custom-scrollbar3::-webkit-scrollbar {
+      width: 1px;
+      height: 4px;
+
+    }
+  
+    .custom-scrollbar3::-webkit-scrollbar-track {
+      background: transparent;
+      
+    }
+  
+    .custom-scrollbar3::-webkit-scrollbar-thumb {
+      background-color: #05b6d3;
+      width: 1px;
+      height: 1px;
+      border-radius: 10px;
+      cursor:grab;
+
+    }
+  
+    .custom-scrollbar3-dark::-webkit-scrollbar-thumb {
+      background-color: #131314;
+      cursor: pointer;
+
+    }
+  }

@@ -1,14 +1,26 @@
 import React from "react";
-import { PuffLoader  } from "react-spinners";
+import { PuffLoader } from "react-spinners";
+import { IoIosFlower } from "react-icons/io";
 
 const Loader = () => {
   return (
-    // <div className="fixed left-0 top-0 flex justify-center items-center h-screen w-full bg-[rgb(0,0,0,0.7)] z-100">
-    //   <PuffLoader  color="#ffffff" size={140} />
-    // </div>
-    <div className="absolute top-[36%] left-[57%]">
-    <PuffLoader color="#ffffff" size={140} />
-    </div>
+    <>
+      <style>
+        {`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      <div className="relative top-[2%]">
+        {/* <PuffLoader color="#ffffff" size={40} /> */}
+        <IoIosFlower
+          className="text-4xl text-[#52ced6]"
+          style={{ animation: "spin 3s linear infinite" }}
+        />
+      </div>
+    </>
   );
 };
 
