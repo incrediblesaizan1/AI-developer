@@ -53,15 +53,18 @@ const Chats = () => {
   const deleteMessage = async(id) =>{
     setLoading(true)
  await axiosInstance.delete(`/delete-question/${id}`)
- setLoading(false)
+ setTimeout(() => {
+  
+   setLoading(false)
+ }, 900);
   }
   
 
   return (
     <>
     {loading? <Loader /> : (
-      <div className="h-screen w-full overflow-auto bg-[#292927] text-white">
-      <div className="flex items-center p-3 w-full justify-between px-4">
+      <div className="h-screen w-full overflow-auto custom-scrollbar bg-[#292927] text-white">
+      <div className="flex items-center p-3 w-full justify-between px-4 sticky top-0 bg-slate-700">
         <div className="flex gap-16 items-center">
           <Botton />
           <div className="flex items-center gap-2 text-2xl">
@@ -98,7 +101,7 @@ const Chats = () => {
             ? filteredResults.reverse().map((e) => (
                 <div
                   key={e._id}
-                  className="bg-[#3c3c39] my-3 w-2/4 h-16 text-start content-center px-6 rounded-2xl mx-auto"
+                  className=" text-white bg-slate-700 my-3 w-2/4 h-16 text-start content-center px-6 rounded-2xl mx-auto"
                 >
                   {e.question.length > 75 ? (
                     <h1 className="capitalize text-lg flex items-center justify-between">
