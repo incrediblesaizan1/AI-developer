@@ -34,7 +34,7 @@ const Chats = () => {
     findingUser();
     userQuestion();
     setLoading(false)
-  }, [loading]);
+  }, [allResults]);
 
   const searchResults = () => {
 
@@ -53,10 +53,8 @@ const Chats = () => {
   const deleteMessage = async(id) =>{
     setLoading(true)
  await axiosInstance.delete(`/delete-question/${id}`)
- setTimeout(() => {
   
    setLoading(false)
- }, 900);
   }
   
 
