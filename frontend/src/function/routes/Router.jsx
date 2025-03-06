@@ -7,6 +7,7 @@ import { axiosInstance } from '../axiosInstance'
 import { useNavigate } from "react-router-dom";
 import Project from '../../screen/Project'
 import Chats from '../../screen/Chats'
+import RecentChat from '../../screen/RecentChat'
 
 
 const Router = () => {
@@ -18,6 +19,7 @@ const Router = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/dashboard' element={<Home />} />
         <Route path='/recents' element={<Chats />} />
+        <Route path='/recents/:id' element={<RecentChat />} />
         {/* <Route path='/project/:id' element={<Project />} /> */}
         
     </Routes>
