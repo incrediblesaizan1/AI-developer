@@ -305,7 +305,7 @@ const Home = () => {
                   }}
                 ></textarea>
               </div>
-            {!inputDown && (
+            {!inputDown && questions.length !== 0 && (
               <div className="relative top-[26vh] w-[53vw]">
               <div className="flex justify-between mb-3 ">
                 <div className="flex items-center gap-1">
