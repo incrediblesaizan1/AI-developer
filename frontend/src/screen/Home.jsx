@@ -318,7 +318,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                {questions && questions.slice(-6).reverse().map((e)=>(
+                {questions.length !== 0 && questions.slice(-6).reverse().map((e)=>(
                   <div className=" bg-[#363634] rounded-2xl h-32 p-4 cursor-pointer" onClick={() => searchChat(e._id)}>
                                     <IoChatbubblesOutline className="text-3xl" />
                     
