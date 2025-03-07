@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { PiChatTextFill } from "react-icons/pi";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
+import { GoArrowRight } from "react-icons/go"
 
 const Home = () => {
   const [sidePanel, setSidePanel] = useState(false);
@@ -304,8 +305,35 @@ const Home = () => {
                   }}
                 ></textarea>
               </div>
+            {!inputDown && (
+              <div className="relative top-[26vh] w-[53vw]">
+              <div className="flex justify-between mb-3 ">
+                <div className="flex items-center gap-1">
+                <IoChatbubblesOutline className="text-lg" />
+              <h1>Your Recent chats</h1>
+                </div>
+                <div className="flex items-center gap-1 cursor-pointer hover:underline" onClick={()=>navigate("/recents")} >
+              <h3>View all</h3>
+              <GoArrowRight className="text-md" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {questions && questions.slice(-6).reverse().map((e)=>(
+                  <div className=" bg-[#363634] rounded-2xl h-32 p-4 cursor-pointer" onClick={() => searchChat(e._id)}>
+                                    <IoChatbubblesOutline className="text-3xl" />
+                    
+                    {e.question.length > 39 ? <h1 className="text-lg font-serif">{e.question.slice(0,40)}...</h1> 
+                    : <h1 className="text-lg font-serif">{e.question}</h1>
+                    }
+                  </div> 
+                ))}
+              </div>
+            </div> 
+            )}
             </div>
+          
           </div>
+       
         </>
       )}
     </>
