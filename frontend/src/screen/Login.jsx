@@ -5,6 +5,8 @@ import { axiosInstance } from "../function/axiosInstance";
 import { useUser } from "../context/user.context";
 import Loader from "./Loader";
 import { IoIosFlower } from "react-icons/io";
+import ur from "../assets/4-n.svg"
+import doc from "../assets/doc.svg"
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
@@ -134,7 +136,7 @@ const Login = () => {
         <div className="w-3/4 text-start ">
           <div className="bg-[#e4e2d8] flex h-14 font-semibold gap-2 w-5/6 text-md rounded-xl mx-auto px-2 py-1">
             <img
-              src="../../public/1-n.svg"
+              src={ur}
               alt=""
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -148,7 +150,7 @@ const Login = () => {
             <div className="bg-[#fbfbf8] border border-gray-200 h-10 py-2  w-[12vw] text-md rounded-xl px-3 relative right-14 top-5 ">
               <p>Here's the report.</p>
             </div>
-            <img src="../../public/doc.svg" alt="" />
+            <img src={doc} alt="" />
           </div>
         </div>
       </div>

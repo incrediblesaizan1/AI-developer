@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../function/axiosInstance";
 import Loader from "./Loader";
 import { IoIosFlower } from "react-icons/io";
+import Code from "../assets/code.svg"
+import ur from "../assets/1-n.svg"
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -152,7 +154,7 @@ const Register = () => {
         <div className="w-3/4 text-start ">
           <div className="bg-[#e4e2d8] flex h-14 font-semibold gap-2 w-4/6 text-md rounded-xl mx-auto px-2 py-1">
             <img
-              src="../../public/Snapchat-227388263.jpg"
+              src={ur}
               alt=""
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -163,7 +165,7 @@ const Register = () => {
           <div className="bg-white h-10 py-2  w-[19vw] text-md rounded-xl px-3 relative right-14 top-5 ">
           <p>All set. Here's the optimized code.</p>
           </div>
-            <img src="../../public/code.svg" alt="" />
+            <img src={Code} alt="" />
           </div>
 
         </div>
