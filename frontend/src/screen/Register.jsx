@@ -152,7 +152,7 @@ const Register = () => {
         <div className="w-3/4 text-start ">
           <div className="bg-[#e4e2d8] flex h-14 font-semibold gap-2 w-4/6 text-md rounded-xl mx-auto px-2 py-1">
             <img
-              src="../../public/4-n.svg"
+              src="../../public/Snapchat-227388263.jpg"
               alt=""
               className="w-8 h-8 rounded-full object-cover"
             />
