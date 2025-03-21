@@ -189,14 +189,13 @@ app.post("/login", async (req, res) => {
       "lslsdlsdlsfndnvlsklskdssldsldsl"
     );
 
-    // return res
-    //   .status(200)
-    //   .json({
-    //     Error: false,
-    //     message: "You Logged In Successfully",
-    //     user: { email: user.email, accessToken },
-    //   });
-    res.send(user)
+    return res
+      .status(200)
+      .json({
+        Error: false,
+        message: "You Logged In Successfully",
+        user: { email: user.email, accessToken },
+      });
   } catch (error) {
     console.log("Something went wrong while login user", error);
     res.status(500).end("Something went wrong while login user");
