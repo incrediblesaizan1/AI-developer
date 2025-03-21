@@ -196,7 +196,7 @@ app.post("/login", async (req, res) => {
     //     message: "You Logged In Successfully",
     //     user: { email: user.email, accessToken },
     //   });
-    res.send("hello")
+    res.send(user)
   } catch (error) {
     console.log("Something went wrong while login user", error);
     res.status(500).end("Something went wrong while login user");
