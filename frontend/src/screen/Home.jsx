@@ -292,7 +292,7 @@ const Home = () => {
               )}
 
               <div
-                className={`mt-12 bg-[#3d3d3a] fixed  ${
+                className={`mt-12 z-50 bg-[#3d3d3a] fixed  ${
                   inputDown ? "-bottom-3" : "top-40"
                 }  rounded-2xl  pr-12 p-1`}
               >
@@ -312,7 +312,7 @@ const Home = () => {
                   value={message}
                   placeholder="Ask anything"
                   onChange={(e) => setMessage(e.target.value)}
-                  className=" textinp bg-transparent resize-none text-justify rounded-xl p-2 w-[48vw] outline-none custom-scrollbar2 min-h-28 max-h-96 overflow-y-auto"
+                  className=" textinp bg-transparent resize-none text-justify rounded-xl p-2 w-[50vw] outline-none custom-scrollbar2 min-h-28 max-h-96 overflow-y-auto"
                   ref={(el) => {
                     if (el) {
                       el.style.height = "auto";
