@@ -5,7 +5,7 @@ function isLoggedIn(req, res, next){
       let accessToken = req.headers['accesstoken']
      let data = jwt.verify(accessToken, "lslsdlsdlsfndnvlsklskdssldsldsl")
     if(data){
-     req.user = {data, accessToken : req.cookies.accessToken}
+     req.user = {data, accessToken : accessToken}
     }
     next()
    } catch (error) {

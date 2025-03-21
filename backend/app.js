@@ -209,7 +209,6 @@ app.get("/profile", isLoggedIn, async (req, res) => {
   const { userId } = req.user.data;
 
   const user = await userModel.findOne({ _id: userId });
-
   if (!user) {
     return res.status(401);
   }
