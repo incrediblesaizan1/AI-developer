@@ -7,5 +7,6 @@ export const axiosInstance = axios.create({
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    "accesstoken": localStorage.getItem("accesstoken")
   },
 });

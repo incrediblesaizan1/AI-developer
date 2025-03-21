@@ -45,6 +45,7 @@ const Login = () => {
       setUser(user.data.user);
       setIsLoading(false);
       console.log("user logged in successfully", user);
+      localStorage.setItem( "accesstoken", user.data.user.accessToken)
       navigate("/dashboard");
     } catch (error) {
       setIsLoading(false);
