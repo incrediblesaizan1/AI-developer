@@ -175,13 +175,14 @@ app.post("/login", async (req, res) => {
         .json({ Error: true, message: "All fields are required " });
 
     let user = await userModel.findOne({ $or: [{ email: req.body.identifier }, { username: req.body.identifier }] });
-    if (!user)
+    if (!user){
       return res.status(400).json({ Error: true, message: "User not found" });
+    }
 
-    // const isPasswordValid = await bcrypt.compare(password, user.password);
-    // if (!isPasswordValid) {
-    //   return res.status(400).json({ message: "Invalid Credentials" });
-    // }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid Credentials" });
+    }
 
     // const accessToken = jwt.sign(
     //   { userId: user._id, email: user.email },
