@@ -184,10 +184,10 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid Credentials" });
     }
 
-    // const accessToken = jwt.sign(
-    //   { userId: user._id, email: user.email },
-    //   "lslsdlsdlsfndnvlsklskdssldsldsl"
-    // );
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      "lslsdlsdlsfndnvlsklskdssldsldsl"
+    );
 
     // return res
     //   .status(200)
@@ -196,7 +196,7 @@ app.post("/login", async (req, res) => {
     //     message: "You Logged In Successfully",
     //     user: { email: user.email, accessToken },
     //   });
-    res.send(user)
+    res.send(accessToken)
   } catch (error) {
     console.log("Something went wrong while login user", error);
     res.status(500).end("Something went wrong while login user");
