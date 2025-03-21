@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import userModel from "./models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
 import isLoggedIn from "./middlewares/isLoggedIn.middleware.js";
 import projectModel from "./models/project.model.js";
 import { createServer } from "http";
@@ -65,10 +64,9 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "accesstoken"],
   })
 );
-app.use(cookieParser());
 app.options("*", cors());
 
 
@@ -156,11 +154,6 @@ app.post("/register", async (req, res) => {
     );
 
     return res
-      .cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true, // Use false for localhost, true for production
-        sameSite: "none",
-      })
       .status(200)
       .json({
         user: { email: newUser.email, accessToken },
@@ -196,11 +189,6 @@ app.post("/login", async (req, res) => {
     );
 
     return res
-      .cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true, // Use false for localhost, true for production
-        sameSite: "none",
-      })
       .status(200)
       .json({
         Error: false,
@@ -214,12 +202,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/logout", isLoggedIn, async (req, res) => {
-  res.clearCookie("accessToken");
-  // , " ", {
-  //   httpOnly: true,
-  //   secure: true, // Use false for localhost, true for production
-  //   sameSite: "none",
-  // });
   res.json({ message: "you logged out successfully." });
 });
 
