@@ -5,7 +5,6 @@ import Register from '../../screen/Register'
 import Home from '../../screen/Home'
 import { axiosInstance } from '../axiosInstance'
 import { useNavigate } from "react-router-dom";
-import Project from '../../screen/Project'
 import Chats from '../../screen/Chats'
 import RecentChat from '../../screen/RecentChat'
 
@@ -20,7 +19,6 @@ const Router = () => {
         <Route path='/dashboard' element={<Home />} />
         <Route path='/recents' element={<Chats />} />
         <Route path='/recents/:id' element={<RecentChat />} />
-        {/* <Route path='/project/:id' element={<Project />} /> */}
         
     </Routes>
     </BrowserRouter>
@@ -34,7 +32,12 @@ const Router = () => {
     useEffect(() => {
       const checkAuth = async () => {
         try {
-          await axiosInstance("/profile");
+          await axiosInstance.get("/profile" ,{
+            headers: {
+              "Content-Type": "application/json",
+              "accesstoken": localStorage.getItem("accesstoken")
+            },
+          });
           setIsLoading(false);
           setIsAuthenticated(true);
         } catch (error) {

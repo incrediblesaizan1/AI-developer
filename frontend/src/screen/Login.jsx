@@ -1,8 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState,  useEffect } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../function/axiosInstance";
-import { useUser } from "../context/user.context";
 import Loader from "./Loader";
 import { IoIosFlower } from "react-icons/io";
 import ur from "../assets/4-n.svg"
@@ -15,7 +14,6 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useUser();
 
   const toggleShowPassword = () => {
     if (isShowPassword === "password") {
@@ -42,10 +40,9 @@ const Login = () => {
         identifier,
         password,
       });
-      setUser(user.data.user);
-      setIsLoading(false);
-      console.log("user logged in successfully", user);
       localStorage.setItem( "accesstoken", user.data.user.accessToken)
+      console.log("user logged in successfully", user);
+      setIsLoading(false);
       navigate("/dashboard");
     } catch (error) {
       setIsLoading(false);

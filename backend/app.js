@@ -6,9 +6,6 @@ import userModel from "./models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import isLoggedIn from "./middlewares/isLoggedIn.middleware.js";
-import projectModel from "./models/project.model.js";
-import { createServer } from "http";
-import { Server } from "socket.io";
 import {generateResponse} from "./ai.service.js"
 import QuestionsModel from "./models/questions.model.js";
 
@@ -29,93 +26,22 @@ mongoose
     "https://incrediblesaizan1-ai-developer.vercel.app",
   ];
 
-// const server = createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: [
-//       "http://localhost:5173",
-//       "https://incrediblesaizan1-ai-developer.vercel.app",
-//     ],
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// io.on("connection", (socket) => {
-//   const projectId = socket.handshake.query.projectId;
-
-//   socket.join(projectId);
-
-//   socket.on("project-message", (data) => {
-//     socket.to(projectId).emit("project-message", data);
-//   });
-// });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
+ 
+  var corsOptions = {
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Corrected from 'include' to 'true'
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "accesstoken"],
-  })
-);
-app.options("*", cors());
+    credentials: true, 
+  };
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions))
 
-// io.use(async (socket, next) => {
-//   try {
-//     let token = socket.handshake.auth?.Authorization;
-
-//     if (!token && socket.handshake.headers.authorization) {
-//       const authHeader = socket.handshake.headers.authorization;
-//       if (authHeader.startsWith("Bearer ")) {
-//         token = authHeader.split(" ")[1];
-//       }
-//     }
-
-//     if (!token) {
-//       return next(new Error("Authentication Error: No token provided"));
-//     }
-
-//     const user = jwt.verify(
-//       token.replace("Bearer ", ""),
-//       "lslsdlsdlsfndnvlsklskdssldsldsl"
-//     );
-
-//     if (!user) {
-//       return next(new Error("Authentication Error: Invalid token"));
-//     }
-
-//     socket.user = user;
-//     next();
-//   } catch (error) {
-//     console.error("Socket Authentication Error:", error);
-//     next(new Error("Authentication failed"));
-//   }
-// });
-
-// io.on("connection", (socket) => {
-//   const projectId = socket.handshake.query.projectId;
-//   socket.join(projectId);
-
-//   socket.on("project-message", (data) => {
-//     console.log("Received message:", data);
-
-//     socket.to(projectId).emit("project-message", data);
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected");
-//   });
-// });
 
 app.get("/", async(req, res) => {
   res.send("hello saizan khan");
@@ -202,9 +128,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/logout", isLoggedIn, async (req, res) => {
-  res.json({ message: "you logged out successfully." });
-});
 
 app.get("/profile", isLoggedIn, async (req, res) => {
   const { userId } = req.user.data;
@@ -220,50 +143,6 @@ app.get("/profile", isLoggedIn, async (req, res) => {
 
 });
 
-app.post("/create", isLoggedIn, async (req, res) => {
-  try {
-    const { name } = req.body;
-
-    const isUser = await userModel.findOne({ _id: req.user.data.userId });
-    const isProject = await projectModel.findOne({ name: req.body.name });
-
-    if (!name) {
-      return res
-        .status(400)
-        .json({ Error: true, message: "Please enter the name" });
-    }
-    if (!req.user.data.userId) {
-      return res.status(500).json({
-        Error: true,
-        message: "Something went wrong please try again later",
-      });
-    }
-
-    if (isProject) {
-      return res
-        .status(400)
-        .json({ Error: true, message: "Project already Exist" });
-    }
-
-    const project = await projectModel.create({
-      name,
-      users: req.user.data.userId,
-    });
-
-    return res.status(200).json({
-      project,
-      message: "Project Created Successfully",
-    });
-  } catch (error) {
-    console.log("Something went wrong while creating project", error);
-    res.status(500).json("Something went wrong while creating project");
-  }
-});
-
-app.get("/delete", async (req, res) => {
-  await projectModel.deleteMany();
-  res.send("project deleted");
-});
 
 app.post("/prompt",isLoggedIn,async(req,res)=>{
   try {
@@ -330,155 +209,6 @@ app.delete("/delete-question/:id", isLoggedIn, async(req,res)=>{
 })
 
 
-app.get("/get-user-project", isLoggedIn, async (req, res) => {
-  try {
-    const projects = await projectModel.find({ users: req.user.data.userId });
-    return res.status(200).json({
-      projects: projects,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong while fetching projects",
-      error,
-    });
-  }
-});
-
-app.get("/project/:id", isLoggedIn, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({
-        message: "Something went wrong while fetching projects",
-        error,
-      });
-    }
-
-    const project = await projectModel.findOne({ _id: id });
-
-    return res.status(200).json({
-      project,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong while fetching project details",
-      error,
-    });
-  }
-});
-
-app.get("/colabUsers/:id", isLoggedIn, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({
-        message: "Something went wrong while fetching projects",
-        error,
-      });
-    }
-
-    const project = await projectModel.findOne({ _id: id });
-
-    const usersData = await Promise.all(
-      project.users.map(async (e) => {
-        return await userModel.findOne({ _id: e });
-      })
-    );
-
-    res.status(200).json({
-      usersData,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong while fetching project details",
-      error,
-    });
-  }
-});
-
-app.get("/get-all-users", isLoggedIn, async (req, res) => {
-  try {
-    const users = await userModel.find();
-    return res.status(200).json({
-      users,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      Error: true,
-      message: "Something went wrong while fetching the users.",
-    });
-  }
-});
-
-app.put("/add-user/:projectId", isLoggedIn, async (req, res) => {
-  try {
-    const { collaboratorEmail } = req.body;
-
-    if (!collaboratorEmail) {
-      return res.status(400).json({
-        Error: true,
-        message: "Please enter the E-Mail of Collaborator.",
-      });
-    }
-
-    if (!req.params.projectId) {
-      return res.status(400).json({
-        Error: true,
-        message: "Please select a Project.",
-      });
-    }
-
-    const findCollaborator = await userModel.findOne({
-      email: collaboratorEmail,
-    });
-
-    if (!findCollaborator) {
-      return res.status(400).json({
-        Error: true,
-        message: "User not found.",
-      });
-    }
-
-    const updateProject = await projectModel.findOne({
-      _id: req.params.projectId,
-    });
-
-    if (!updateProject) {
-      return res.status(500).json({
-        Error: true,
-        message:
-          "Some error occured while updating the project. Please try again later.",
-      });
-    }
-
-    if (
-      updateProject.users.some(
-        (e) => e.toString() === findCollaborator._id.toString()
-      )
-    ) {
-      return res.status(400).json({
-        Error: true,
-        message: "User already a collaborator.",
-      });
-    }
-
-    updateProject.users.push(findCollaborator._id);
-    await updateProject.save();
-
-    return res.status(200).json({
-      updateProject,
-      message: "Collaborator added successfully.",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong while adding collaborator projects",
-      error,
-    });
-  }
-});
-
 app.get("/user/:id", isLoggedIn, async(req,res)=>{
   const {id} = req.params
   const user = await userModel.findById(id)
@@ -488,5 +218,5 @@ app.get("/user/:id", isLoggedIn, async(req,res)=>{
   })
 })
 
-// server.listen(process.env.PORT || 3000);
+
 app.listen(process.env.PORT || 3000)

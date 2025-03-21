@@ -79,6 +79,11 @@ const Home = () => {
     setMessageLoading(true);
     const data = await axiosInstance.post("/find-question", {
       question: e._id,
+    },{
+      headers: {
+        "Content-Type": "application/json",
+        "accesstoken": localStorage.getItem("accesstoken")
+      },
     });
     appendOutgoingMessage(data.data.find.question, user);
     setMessage("");
@@ -94,6 +99,11 @@ const Home = () => {
     setMessageLoading(true);
     const data = await axiosInstance.post("/find-question", {
       question: id,
+    },{
+      headers: {
+        "Content-Type": "application/json",
+        "accesstoken": localStorage.getItem("accesstoken")
+      },
     });
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -112,7 +122,12 @@ const Home = () => {
     scrollToBottom();
 
     try {
-      let response = await axiosInstance.post("/prompt", { prompt: message });
+      let response = await axiosInstance.post("/prompt", { prompt: message } ,{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
+      });
 
       messages.push({ text: response.data, type: "incoming" });
     } catch (error) {
@@ -137,15 +152,26 @@ const Home = () => {
 
     const findingUser = async () => {
       try {
-        const user = await axiosInstance.get("/profile");
+        const user = await axiosInstance.get("/profile",{
+          headers: {
+            "Content-Type": "application/json",
+            "accesstoken": localStorage.getItem("accesstoken")
+          },
+        });
         setUser(user.data.user);
       } catch (error) {
         navigate("/login");
       }
     };
 
+
     const userQuestion = async () => {
-      const question = await axiosInstance.get("/user-question");
+      const question = await axiosInstance.get("/user-question",{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
+      });
       setQuestions(question.data.questions);
     };
 

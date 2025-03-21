@@ -32,14 +32,24 @@ const Chats = () => {
     setLoading(true);
     const findingUser = async () => {
       try {
-        await axiosInstance.get("/profile");
+        await axiosInstance.get("/profile" ,{
+          headers: {
+            "Content-Type": "application/json",
+            "accesstoken": localStorage.getItem("accesstoken")
+          },
+        });
       } catch (error) {
         navigate("/login");
       }
     };
 
     const userQuestion = async () => {
-      const question = await axiosInstance.get("/user-question");
+      const question = await axiosInstance.get("/user-question" ,{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
+      });
       setAllResults(question.data.questions);
       setFilteredResults(question.data.questions);
     };
@@ -64,7 +74,12 @@ const Chats = () => {
 
   const deleteMessage = async (id) => {
     setLoading(true);
-    await axiosInstance.delete(`/delete-question/${id}`);
+    await axiosInstance.delete(`/delete-question/${id}` ,{
+      headers: {
+        "Content-Type": "application/json",
+        "accesstoken": localStorage.getItem("accesstoken")
+      },
+    });
 
     setLoading(false);
   };

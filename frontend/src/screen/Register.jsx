@@ -44,8 +44,9 @@ const Register = () => {
         username,
         password,
       });
-      setIsLoading(false);
+      localStorage.setItem( "accesstoken", user.data.user.accessToken)
       console.log("user logged in successfully", user);
+      setIsLoading(false);
       navigate("/dashboard");
     } catch (error) {
       setIsLoading(false);

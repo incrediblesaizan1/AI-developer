@@ -68,6 +68,11 @@ const RecentChat = () => {
       setMessageLoading(true);
       const data = await axiosInstance.post("/find-question", {
         question: id,
+      },{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
       });
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -85,6 +90,11 @@ const RecentChat = () => {
     setMessageLoading(true);
     const data = await axiosInstance.post("/find-question", {
       question: id,
+    },{
+      headers: {
+        "Content-Type": "application/json",
+        "accesstoken": localStorage.getItem("accesstoken")
+      },
     });
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -103,7 +113,12 @@ const RecentChat = () => {
     scrollToBottom();
 
     try {
-      let response = await axiosInstance.post("/prompt", { prompt: message });
+      let response = await axiosInstance.post("/prompt", { prompt: message },{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
+      });
 
       messages.push({ text: response.data, type: "incoming" });
     } catch (error) {
@@ -128,7 +143,12 @@ const RecentChat = () => {
 
     const findingUser = async () => {
       try {
-        const user = await axiosInstance.get("/profile");
+        const user = await axiosInstance.get("/profile",{
+          headers: {
+            "Content-Type": "application/json",
+            "accesstoken": localStorage.getItem("accesstoken")
+          },
+        });
         setUser(user.data.user.data);
       } catch (error) {
         navigate("/login");
@@ -136,7 +156,12 @@ const RecentChat = () => {
     };
 
     const userQuestion = async () => {
-      const question = await axiosInstance.get("/user-question");
+      const question = await axiosInstance.get("/user-question",{
+        headers: {
+          "Content-Type": "application/json",
+          "accesstoken": localStorage.getItem("accesstoken")
+        },
+      });
       setQuestions(question.data.questions);
     };
 
