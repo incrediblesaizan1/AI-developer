@@ -23,7 +23,7 @@ mongoose
   const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://incrediblesaizan1-ai-developer.vercel.app",
+    "https://ask-sk.vercel.app",
   ];
 
  
